@@ -12,6 +12,10 @@ boolean<script type="text/x-red" data-template-name="hue-motion">
         <input type="text" id="node-input-sensorid" placeholder="1" style="width: 60%;"/>
         <a id="node-config-input-scan-sensors" class="editor-button"><i class="fa fa-search"></i></a>
     </div>
+    <div class="form-row">
+        <label for="node-input-interval"><i class="fa fa-clock-o"></i> Poll interval</label>
+        <input type="text" placeholder="Inherited from bridge" id="node-input-interval">
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="hue-motion">
@@ -19,6 +23,9 @@ boolean<script type="text/x-red" data-template-name="hue-motion">
 
     <h3>Setup</h3>
     <p>Select the preconfigured Hue Bridge and hit the search button to find all available motion sensors. Type in the name of the sensor manually or keep the default device name. Note that events will only be sent if a motion is detected, if a motion stops or if the motion sensor receives the "Activate / Deactivate" command.</p>
+
+    <h3>Poll interval</h3>
+    <p>Interval in milliseconds that is used to poll active nodes for changes. If empty default interval from bridge configuration is used. (min 500ms)</p>
 
     <h3>Activate / Deactivate</h3>
     <p>Activates or deactivates the motion sensor based on the passed in <b>msg.payload</b> values of:</p>
@@ -76,7 +83,18 @@ boolean<script type="text/x-red" data-template-name="hue-motion">
         defaults: {
             name: {value:""},
             bridge: {type: "hue-bridge", required: true},
-            sensorid: {value:"", required: true, validate: RED.validators.number()}
+            sensorid: {value:"", required: true, validate: RED.validators.number()},
+            interval: {
+                value: "",
+                required: false,
+                validate: function(v) {
+                    if(v && v != "")
+                    {
+                        return (/^[0-9]+/.test(v) && parseInt(v,10) >= 500);
+                    }
+                    return true;
+                }
+            }
         },
         inputs: 1,
         outputs: 1,

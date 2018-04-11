@@ -112,7 +112,7 @@ module.exports = function(RED)
 					scope.status({fill: "red", shape: "ring", text: "connection error"});
 					clearInterval(scope.recheck);
 				});
-			}, parseInt(bridge.config.interval));
+			}, parseInt(config.interval ? config.interval : bridge.config.interval));
 		}
 		else
 		{
